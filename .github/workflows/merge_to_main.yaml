@@ -4,8 +4,6 @@ on:
   workflow_run:
     workflows: 
       - "Staging - Python Backend Tests"
-    branches:
-      - staging
     types:
       - completed
 
