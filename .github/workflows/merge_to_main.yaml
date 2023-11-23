@@ -44,6 +44,3 @@ jobs:
           git merge --no-ff main -m "Automation: merge staging to main"
           git push origin main
 
-
-
-          
