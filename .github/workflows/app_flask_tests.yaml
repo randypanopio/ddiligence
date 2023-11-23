@@ -1,4 +1,4 @@
-name: Python Backend Tests
+name: Staging - Python Backend Tests
 
 on:
   push:
@@ -18,8 +18,8 @@ jobs:
 
       - name: Check commit message for specific tags
         run: |
-          if grep -qiE "\[skip-all\]|\[WIP\]|\[SKIP CI\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "Skipping tests as commit message contains [skip-all], [WIP], or [SKIP CI]."
+          if grep -qiE "\[backend\]|\[skip-all\]|\[wip\]|\[skip ci\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
+            echo "Skipping tests as commit message contains, [backend] [skip-all], [wip], or [skip ci]."
             exit 78  # Exit with a neutral code
           else
             echo "Commit message does not contain any skip tags. Proceeding with tests."
@@ -41,9 +41,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.x
-
-      - name: ===DEBUG=== List contents of app_flask
-        run: ls
 
       - name: Install dependencies
         run: |
