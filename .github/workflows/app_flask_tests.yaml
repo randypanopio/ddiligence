@@ -40,7 +40,7 @@ jobs:
           python-version: 3.x
 
       - name: Navigate to app_flask directory
-        run: cd app_flask
+        run: cd app_flask/
 
       - name: ===DEBUG=== List contents of app_flask
         run: ls
