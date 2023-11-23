@@ -2,8 +2,7 @@ name: Merge Staging to Main
 
 on:
   workflow_run:
-    workflows: 
-      - "Staging - Python Backend Tests"
+    workflows: ["Staging - Python Backend Tests"]
     types:
       - completed
 
