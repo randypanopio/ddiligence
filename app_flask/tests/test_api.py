@@ -31,6 +31,9 @@ class TestDebugEndpoints(unittest.TestCase):
         for entry in data['entries']:
             self.assertIsInstance(entry, dict)
 
+    def test_DEBUG(self):
+        self.assertEqual(1,2)
+
 
 if __name__ == '__main__':
     # Set up logging
