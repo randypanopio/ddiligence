@@ -38,7 +38,7 @@ jobs:
 
       - name: Merge to Main
         run: |
-          git fetch --unshallow
+          git fetch origin staging:staging
           git checkout main
           git pull
           git merge --no-ff main -m "Automation: merge staging to main"
