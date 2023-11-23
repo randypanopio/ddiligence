@@ -11,6 +11,8 @@ on:
 
 jobs:
   merge_to_main:
+    runs-on: ubuntu-latest
+    
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     - name: Checkout code
       uses: actions/checkout@v2
