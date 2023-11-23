@@ -32,6 +32,8 @@ jobs:
     steps:
       - name: Merge to Main
         run: |
+          git checkout staging
+          git pull origin
           git checkout main
           git merge staging  # Merge staging into main
           git push origin main
