@@ -1,0 +1,22 @@
+name: Merge Staging to Main
+
+on:
+  workflow_run:
+    workflows: 
+      - "Staging - Python Backend Tests"
+    branches:
+      - staging
+    types:
+      - completed
+
+jobs:
+  merge_to_main:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Merge to Main
+        run: |
+          git checkout main
+          git merge staging  # Merge staging into main
+          git push origin main
