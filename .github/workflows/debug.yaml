@@ -15,20 +15,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set Git config
-        run: |
-          git config --local user.email "actions@users.noreply.github.com"
-          git config --local user.name "Github Actions"      
+     - name: Set Git config
+       run: |
+         git config --local user.email "actions@users.noreply.github.com"
+         git config --local user.name "Github Actions"     
 
-      - name: Merge to Staging to Main
-        run: |
-          git fetch origin staging:staging
-          git checkout main
-          git pull
-          git merge --no-ff staging -m "Automation-PAT-bot: merge staging to main"
-          git push origin main
-        env:
-          GH_TOKEN: ${{ secrets.ACTION_PAT}}
+     - name: Fetch and checkout main branch
+       run: |
+         git fetch origin main:main
+         git checkout main
+
+     - name: Merge staging into main
+       run: |
+         git merge --no-ff staging -m "Automation: merge staging to main"
+
+     - name: Push changes to main
+       run: |
+         git push origin main
+       env:
+         GH_TOKEN: ${{ secrets.ACTION_PAT}}
 
           
 
