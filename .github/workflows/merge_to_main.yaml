@@ -53,3 +53,6 @@ jobs:
       - name: Push changes on main to remote 
         run: |
           git push origin main --force
+        env:
+          GH_TOKEN: ${{ secrets.ACTION_PAT}}
+
