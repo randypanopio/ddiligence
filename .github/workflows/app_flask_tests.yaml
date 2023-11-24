@@ -14,12 +14,12 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Check commit message for specific tags
         run: |
-          if grep -qiE "\[backend\]|\[skip-all\]|\[wip\]|\[skip ci\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "Skipping tests as commit message contains, [backend] [skip-all], [wip], or [skip ci]."
+          if grep -qiE "\[frontend\]|\[skip-all\]|\[wip\]|\[skip ci\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
+            echo "Skipping tests as commit message contains, [frontend], [skip-all], [wip], or [skip ci]."
             exit 78  # Exit with a neutral code
           else
             echo "Commit message does not contain any skip tags. Proceeding with tests."
@@ -53,4 +53,3 @@ jobs:
       - name: Check test status and prevent merge/push on failure
         if: ${{ failure() }}
         run: exit 1  # Exit with a non-zero code to fail the workflow
-        
