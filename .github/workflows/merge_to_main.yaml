@@ -9,7 +9,7 @@ on:
 jobs:
   check-commit:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -20,7 +20,7 @@ jobs:
             echo "Skipping tests as commit message contains, [skip-all], [wip], or [skip ci]."
             exit 78  # Exit with a neutral code
           else
-            echo "Commit message does not contain any skip tags. Proceeding with tests."
+            echo "Commit message does not contain any skip tags. Proceeding with auto merge."
           fi
 
 
@@ -36,32 +36,14 @@ jobs:
       - name: Set Git config
         run: |
           git config --local user.email "actions@users.noreply.github.com"
-          git config --local user.name "Github Actions"   
-
-      - name: Detach HEAD
-        run: |
-          git checkout --detach
-
-      - name: Fetch latest changes on main and staging branches
-        run: |
-          git fetch origin main:main
-          git fetch origin staging:staging
+          git config --local user.name "Github Actions"
 
       - name: Merge staging into main
         run: |
           git checkout main
-          git merge --no-ff --allow-unrelated-histories staging -m "Automation: merge staging to main"
-
-      - name: Resolve merge conflicts
-        run: |
-          git diff --name-only --diff-filter=U | xargs git checkout --theirs
-
-      - name: Commit and push changes on main to remote 
-        run: |
-          git commit -am "Resolve merge conflicts"
+          git merge staging --no-ff --no-edit
           git push origin main
         env:
-          GH_TOKEN: ${{ secrets.ACTION_PAT}}
-
+          GH_TOKEN: ${{secrets.ACTION_PAT}}
 
 
