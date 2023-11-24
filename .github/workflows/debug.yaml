@@ -34,7 +34,5 @@ jobs:
      - name: Push changes to main
        run: |
          git push origin main
-       env:
-         GH_TOKEN: ${{ secrets.ACTION_PAT}}
 
 
