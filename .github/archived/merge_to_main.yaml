@@ -1,3 +1,4 @@
+# This was initially setup to automatically merge changes from staging back into main. Giving up for now due to syncing issues
 name: Merge Staging to Main
 
 on:
