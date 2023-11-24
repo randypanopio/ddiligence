@@ -14,7 +14,7 @@ jobs:
 
    steps:
      - name: Checkout code
-       uses: actions/checkout@v2
+       uses: actions/checkout@v3
 
      - name: Set Git config
        run: |
@@ -25,11 +25,12 @@ jobs:
        run: |
          git fetch origin main:main
          git fetch origin staging:staging
+         git fetch origin cicd_testing:cicd_testing
          git checkout main
 
      - name: Merge staging into main
        run: |
-         git merge --no-ff staging -m "Automation: merge staging to main"
+         git merge --no-ff cicd_testing -m "Automation: merge staging to main"
 
      - name: Push changes to main
        run: |
