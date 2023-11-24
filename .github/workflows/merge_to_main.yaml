@@ -33,7 +33,7 @@ jobs:
 
       - name: Set Git config
         run: |
-          git config --local user.email "actions@github.com"
+          git config --local user.email "actions@users.noreply.github.com"
           git config --local user.name "Github Actions"      
 
       - name: Merge to Main
@@ -41,6 +41,10 @@ jobs:
           git fetch origin staging:staging
           git checkout main
           git pull
-          git merge --no-ff main -m "Automation: merge staging to main"
+          git merge --no-ff staging -m "Automation-PAT-bot: merge staging to main"
           git push origin main
+        env:
+          GH_TOKEN: ${{ secrets.ACTION_PAT}}
+
+          
 
