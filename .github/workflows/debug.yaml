@@ -23,10 +23,10 @@ jobs:
 
      - name: Fetch latest changes on main and staging branches
        run: |
+         git checkout main
          git fetch origin main:main
          git fetch origin staging:staging
          git fetch origin cicd_testing:cicd_testing
-         git checkout main
 
      - name: Merge staging into main
        run: |
