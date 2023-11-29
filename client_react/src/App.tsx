@@ -1,6 +1,7 @@
 import './App.css';
 import React, {useState, useEffect} from 'react'
 import BannerMessage from './components/adviceBanner'
+import LineGraph from './components/stockChart';
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <BannerMessage/>
+        <LineGraph/>
 
       </header>
     </div>
