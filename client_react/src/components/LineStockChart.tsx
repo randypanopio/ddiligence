@@ -35,13 +35,6 @@ const LineGraph: React.FC = () => {
  return <Line data={chartData} options={options}/>;
 };
 
-function StockChart() {
-   return (
-       <LineGraph/>
-   )
-}
 
-
-
-export default StockChart;
+export default LineGraph;
 

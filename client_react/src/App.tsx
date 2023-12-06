@@ -27,8 +27,7 @@ function App() {
         <BannerMessage/>
         <LineGraph/>
         <br></br>
-        <OHLC_Chart data={[]}/>
-
+        <OHLC_Chart data = {[]}/>
       </header>
     </div>
   );
