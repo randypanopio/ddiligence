@@ -10,7 +10,7 @@ function App() {
 
   useEffect(() => {
     // get json data from flask api
-    fetch('/api/hello').then(
+    fetch('http://127.0.0.1:5000/api/v1/hello').then(
       res => res.json()
     ).then (
       data => {
@@ -25,9 +25,9 @@ function App() {
     <div className="App">
       <header className="App-header">
         <BannerMessage/>
-        <LineGraph/>
+        {/* <LineGraph/> */}
         <br></br>
-        <OHLC_Chart data={[]}/>
+        {/* <OHLC_Chart data={[]}/> */}
 
       </header>
     </div>

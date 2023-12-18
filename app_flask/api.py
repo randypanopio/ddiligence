@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 import stock_data as sd
+import misc
 
 
 app = Flask(__name__)
@@ -24,6 +25,10 @@ def get_historic_data():
     else:
         message = {'error': f'Stock {ticker} was not found or is not available'}
         abort(404, description=message)
+
+@app.route(f'{v_prefix}daily_messages')
+def get_daily_messages():
+    return jsonify(misc.retrieve_daily_messages())
 
 
 if __name__ == '__main__':
