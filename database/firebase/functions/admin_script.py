@@ -1,6 +1,4 @@
-# Welcome to Cloud Functions for Firebase for Python!
-# To get started, simply uncomment the below code or create your own.
-# Deploy with `firebase deploy`
+#only to be run locally as an admin user DO NOT DEPLOY TO CLOUD LOL
 
 # i dunno wtf this does but it fixes my problem about "OSError: Project was not passed and could not be determined from the environment." lol
 import os
@@ -14,6 +12,7 @@ from firebase_admin import initialize_app, firestore, credentials
 from google.cloud import firestore
 
 
+from logic.stock_data import get_data
 from datetime import datetime, timedelta
 
 cred = credentials.Certificate('super_secrets/serviceAccKey.json')
@@ -22,6 +21,18 @@ db = firestore.Client()
 
 initialize_app()
 
-# daily function to update db with new data
+"""
+    only used to generate base stock data, be careful running this! very expensive lmao
+"""
+
+# Iterate over each data entry and add it to Firestore
+# TODO standardize json schema somewhere...
+ticker = "INTC"
+history_start = (datetime.now() - timedelta(days=365.25 * 25)).strftime("%Y-%m-%d")
+end = datetime.now().strftime("%Y-%m-%d") 
+
+for entry in get_data(ticker, history_start, end):
+    doc_ref = db.collection("stocks_data").document(ticker).collection("entries").document(entry["date"])
+    doc_ref.set(entry["data"])
 
 print("complete!")
