@@ -1,25 +1,17 @@
 #only to be run locally as an admin user DO NOT DEPLOY TO CLOUD LOL
-
-# i dunno wtf this does but it fixes my problem about "OSError: Project was not passed and could not be determined from the environment." lol
 import os
-os.environ.setdefault("GCLOUD_PROJECT", "ddiligence-project")
-
-# The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
-from firebase_functions import firestore_fn, https_fn
-
-# The Firebase Admin SDK to access Cloud Firestore.
 from firebase_admin import initialize_app, firestore, credentials
-from google.cloud import firestore
 
+# Set the path to the service account key JSON file
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "super_secrets/serviceAccKey.json"
+
+# Initialize the Firebase Admin SDK with the service account credentials
+cred = credentials.Certificate('super_secrets/serviceAccKey.json')
+initialize_app(cred)
+db = firestore.Client()
 
 from logic.stock_data import get_data
 from datetime import datetime, timedelta
-
-cred = credentials.Certificate('super_secrets/serviceAccKey.json')
-
-db = firestore.Client()
-
-initialize_app()
 
 """
     only used to generate base stock data, be careful running this! very expensive lmao
