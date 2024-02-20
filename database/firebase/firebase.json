@@ -9,9 +9,11 @@
       "codebase": "default",
       "ignore": [
         "venv",
+        "tests",
         ".git",
         "firebase-debug.log",
-        "firebase-debug.*.log"
+        "firebase-debug.*.log",
+        "admin_script.py"
       ]
     }
   ]
