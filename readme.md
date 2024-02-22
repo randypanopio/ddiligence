@@ -1,4 +1,4 @@
-# (Name to be determined)
+# DDiligence
 A parody application to help financiers make correlations with historic stock data and other historic data such as weather data, space weather, etc.
 
 ## Table of Contents
