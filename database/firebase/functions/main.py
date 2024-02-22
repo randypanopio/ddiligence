@@ -1,7 +1,7 @@
 import os
 from datetime import datetime, timedelta
 from firebase_admin import initialize_app, firestore, credentials
-from firebase_functions import logger, https_fn, options
+from firebase_functions import logger, https_fn, scheduler_fn, options
 from typing import List
 
 from logic.stock_data import get_data
@@ -14,6 +14,17 @@ initialize_app(credentials.Certificate(sv_path))
 
 db = firestore.Client()
 
+# Maybe TODO expose endpoint 
+# @https_fn.on_request(
+#     cors=options.CorsOptions(
+#         cors_origins=[], 
+#         cors_methods=["get", "post"],
+#     )
+# )
+@scheduler_fn.on_schedule(
+    schedule="every day 00:00",
+    timezone=scheduler_fn.Timezone("America/Los_Angeles"),
+)
 def update_current_tickers(day_delta: int = 3) -> None:
     """
         updates firebase current tickers with new entries from date of execution and x days from day_delta
