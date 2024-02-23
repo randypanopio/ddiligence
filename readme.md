@@ -1,20 +1,18 @@
-# (Name to be determined)
+# DDiligence
 A parody application to help financiers make correlations with historic stock data and other historic data such as weather data, space weather, etc.
 
 ## Table of Contents
-1. [Development Setup & Contribution](#setup)
+1. [Development Setup](#setup)
     - [Back End Flask Service Setup](#backend_setup)
-    - [Database & Filesystem Setup](#frontend_setup)
-    - [Front End React Client Setup](#db_setup)
+    - [Front End React Client Setup](#frontend_setup)
+    - [Database & Filesystem Setup](#db_setup)
     - [Build & Deployment Setup](#bnd_setup)
-    - [CI/CD Workflow Setup](#cicd_setup)
+    - [CI/CD Testing Workflow Setup](#testing_setup)
 
 
 # Setup <a name = "setup"></a>
-The following document is for setting up the project to begin contributing.
-
-Contributors should branch of the `staging` branch and merge their changes back to the `staging` branch (regardless of the application component), ideally with code review and apporoval before submission. Upon successful submisson (including tests & build verifications) the changes will be automatically be merged to the `main` branch. TODO succesful changes will be also pushed to the `production` branch and will be provisioned as a change for the next release build.
-- Don't push changes to `main` manually unless you absolutely know what you are doing. We are all consenting developers here.
+This is a monorepo of the ddiligence project. Clone the repo and refer to each subproject's readme.md for more details
+TODO create new readmes for each service.
 
 ## Back End Flask Service Setup: <a name = "backend_setup"></a>
 <b>Required software:</b> Python (3.11.4)
@@ -49,7 +47,7 @@ additional files for the final deployed project
 1. images & icons (TODO figure out how to handle serving final files during deployment step)
 
 
-## CI/CD Workflow Setup <a name="cicd_setup"></a>
+## CI/CD Workflow Setup <a name="testing_setup"></a>
 located in the `.github/workflows/` directory
 
 

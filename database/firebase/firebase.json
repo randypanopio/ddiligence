@@ -1,0 +1,20 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "venv",
+        "tests",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "admin_script.py"
+      ]
+    }
+  ]
+}

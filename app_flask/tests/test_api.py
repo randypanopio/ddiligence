@@ -1,6 +1,7 @@
 import unittest, os, logging
 import api
 
+# unittest requires all test methods to start with test_ !!!!
 class TestDebugEndpoints(unittest.TestCase):
     def setUp(self):
         self.version_prefix = '/api/v1/'
@@ -16,21 +17,6 @@ class TestDebugEndpoints(unittest.TestCase):
         data = response.get_json()
         expected_message = {'message': f'{self.version_prefix} API is available'}
         self.assertEqual(data, expected_message)
-
-    def test_stock_history_nonexistent(self):
-        response = self.app.get(f'{self.version_prefix}stock_history?ticker=ZZZQQQ')
-        self.assertEqual(response.status_code, 404)
-        # TODO extend handle abort obj (its not in response) and match valid message
-
-    def test_stock_history(self):
-        response = self.app.get(f'{self.version_prefix}stock_history?ticker=SPY')
-        data = response.get_json()
-        self.assertIn('entries', data)
-        self.assertIsInstance(data['entries'], list)
-        self.assertGreater(len(data['entries']), 0)
-        for entry in data['entries']:
-            self.assertIsInstance(entry, dict)
-
 
 if __name__ == '__main__':
     # Set up logging

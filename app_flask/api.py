@@ -20,11 +20,8 @@ def hello():
 @app.route(f'{v_prefix}stock_history')
 def get_historic_data():
     ticker = request.args.get('ticker')
-    if sd.is_available(ticker):
-        return jsonify(sd.get_data(ticker))
-    else:
-        message = {'error': f'Stock {ticker} was not found or is not available'}
-        abort(404, description=message)
+    message = {'error': f'Stock {ticker} was not found or is not available'}
+    abort(404, description=message)
 
 @app.route(f'{v_prefix}daily_messages')
 def get_daily_messages():

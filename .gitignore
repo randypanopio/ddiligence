@@ -5,6 +5,8 @@
 /client_react/.pnp
 .pnp.js
 
+.do_not_track/
+
 /app_flask/venv
 */__pycache__
 
