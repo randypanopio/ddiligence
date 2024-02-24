@@ -5,7 +5,7 @@ from firebase_functions import logger, https_fn, scheduler_fn, options
 from typing import List
 
 from logic.stock_data import get_data
-from fault_utils import retry_wrapper
+from utils.fault_tolerance import retry_wrapper
 
 # Use and Initialize service account credentials
 sv_path = "super_secrets/serviceAccKey.json"

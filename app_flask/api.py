@@ -1,8 +1,6 @@
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
-import stock_data as sd
 import misc
-
 
 app = Flask(__name__)
 CORS(app)
