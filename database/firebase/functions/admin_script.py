@@ -36,3 +36,12 @@ def update_current_tickers():
 
 update_current_tickers()
 print("complete!")
+
+# from logic.stock_data import get_data
+# import yfinance as yf
+# ticker = 'INTC'
+# start = datetime(2024, 2, 20)
+# end = datetime(2024, 2, 24)
+
+# stock_data = yf.download(ticker, start=start, end=end)
+# print(stock_data)
