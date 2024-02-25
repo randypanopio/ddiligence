@@ -34,6 +34,9 @@ jobs:
     needs: check-commit
     
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
