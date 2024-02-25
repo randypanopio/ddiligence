@@ -83,3 +83,14 @@ jobs:
           else
             echo "::set-output name=app_flask::false"
           fi
+          
+      - name: Set all_suites output
+        id: set_all_suites
+        run: |
+          if [[ "${{ steps.set_client_react.outputs.client_react }}" == 'false' && \
+                "${{ steps.set_firebase_functions.outputs.firebase_functions }}" == 'false' && \
+                "${{ steps.set_app_flask.outputs.app_flask }}" == 'false' ]]; then
+            echo "::set-output name=all_suites::true"
+          else
+            echo "::set-output name=all_suites::false"
+          fi
