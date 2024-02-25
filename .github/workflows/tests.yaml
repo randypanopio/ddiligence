@@ -11,10 +11,10 @@ on:
         - main
 
 # Tags:
-# skips all tests [skip-all], also checks if tag is set by admin
-# runs ONLY necessary tests and workflows of client_react [client_react]
-# runs ONLY necessary tests of firebase cloud functions [firebase_functions]
-# runs ONLY necessary tests and workflows of Flask API backend [app_flask]
+# [skip-all] skips all tests, also checks if tag is set by admin
+# [client_react] runs ONLY necessary tests and workflows of client_react 
+# [firebase_functions] runs ONLY necessary tests of firebase cloud functions 
+# [app_flask] runs ONLY necessary tests and workflows of Flask API backend 
 
 jobs:
   run-client_react-suite:
@@ -57,10 +57,29 @@ jobs:
     runs-on: ubuntu-latest
     needs: check-tags-and-run
     if: ${{ needs.check-tags-and-run.outputs.run_app_flask == 'true' || needs.check-tags-and-run.outputs.run_all_suites == 'true' }}
+    defaults:
+      run:
+        working-directory: ./app_flask
     steps:
-      - name: run suite
-        run: echo "run-app_flask-suite"      
-      # Steps to run app_flask tests...
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt  # Install dependencies
+
+      - name: Run tests
+        run: |
+          python -m unittest discover -s tests  # Run Python tests
+
+      - name: Check test status and prevent merge/push on failure
+        if: ${{ failure() }}
+        run: exit 1  # Exit with a non-zero code to fail the workflow
 
   check-tags-and-run:
     runs-on: ubuntu-latest
@@ -102,7 +121,6 @@ jobs:
           else
             echo "::set-output name=app_flask::false"
           fi
-
 
       - name: Set all_suites output
         id: set_all_suites
