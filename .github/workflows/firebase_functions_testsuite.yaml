@@ -25,11 +25,11 @@ jobs:
             echo "Commit message does not contain any skip tags. Proceeding with tests."
           fi
 
-  run-tests:
+  run-test-suite:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./database/firebase/functions
+        working-directory: ./database/firebase/functions/tests
     
     needs: check-commit
     
