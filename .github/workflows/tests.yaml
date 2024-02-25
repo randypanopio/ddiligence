@@ -65,6 +65,7 @@ jobs:
       client_react: ${{ steps.set_client_react.outputs.client_react }}
       firebase_functions: ${{ steps.set_firebase_functions.outputs.firebase_functions }}
       app_flask: ${{ steps.set_app_flask.outputs.app_flask }}
+      all_test_suite: ${{ steps.set_all_test_suite.outputs.all_test_suite }}
 
     steps:
       - name: Check if commit message contains [client_react]
@@ -95,6 +96,7 @@ jobs:
           fi
 
       - name: Run all suites if no tags found
+        id: set_all_test_suite
         if: steps.set_client_react.outputs.client_react == 'false' && steps.set_firebase_functions.outputs.firebase_functions == 'false' && steps.set_app_flask.outputs.app_flask == 'false'
         run: |
           # Run all three suites
