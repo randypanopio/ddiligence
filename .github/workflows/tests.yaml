@@ -16,40 +16,46 @@ on:
 # runs ONLY necessary tests of firebase cloud functions [firebase_functions]
 # runs ONLY necessary tests and workflows of Flask API backend [app_flask]
 
+
 jobs:
-  check-admin-skip:
+  check-commit-tags:
     runs-on: ubuntu-latest    
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Check user perms
+      - name: Check if commit message contains [skip-all]
+        id: check_skip_all
+        run: |
+          if grep -qiE "\[skip-all\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
+            echo "[skip-all] tag found in commit message."
+            echo "::set-output name=skip_all::true"
+          else
+            echo "[skip-all] tag not found in commit message."
+            echo "::set-output name=skip_all::false"
+          fi
+
+  check-admin-perms:
+    runs-on: ubuntu-latest
+    needs: check-commit-tags
+    if: needs.check-commit-tags.outputs.skip_all != 'true'
+    steps:
+      - name: Check user permissions
         uses: actions-cool/check-user-permission@v2
         id: check
         with:
-          require: 'write'
+          require: 'admin'
           check-contributor: true
-
-      - run: echo "user-permission = ${{ steps.check.outputs.user-permission }}"
-      - run: echo "require-result = ${{ steps.check.outputs.require-result }}"
-      - run: echo "check-result = ${{ steps.check.outputs.check-result }}"
-
-      # - name: Verify admin user
-      #   run: |
-      #     # Call a script to verify if the committer is an admin
-      #     # Pass the username of the committer to the script
-      #     # Script should exit with a non-zero code if the user is not an admin
-      #     # Example:
-      #     python verify_admin.py ${{ github.actor }}
-
-      # - name: Checks commit tags for skipping pipeline
-      #   run: |
-      #     if grep -qiE "\[client_react\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-      #       echo "Skipping test suite set by admin"
-      #       exit 78  # Exit with a neutral code
-      #     else
-      #       echo "Proceeding with tests..."
-      #     fi   
+    
+      - name: Check if user is admin
+        run: |
+          if [[ "${{ steps.check.outputs.user-permission }}" == "admin" ]]; then
+            echo "User is an admin. Skipping pipeline execution."
+            exit 0  # Exit with success code
+          else
+            echo "User is not an admin. Failing the job."
+            exit 1  # Exit with failure code
+          fi
 
   # check-tags-client_react:
   #   runs-on: ubuntu-latest

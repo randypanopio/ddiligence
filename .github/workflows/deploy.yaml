@@ -6,9 +6,12 @@ concurrency: production
 on:
   pull_request:
     branches:
-        - main
+        - mainfoo
 
 jobs:
     deploy-firebase-functions:
-        environment: production
         runs-on: ubuntu-latest        
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
