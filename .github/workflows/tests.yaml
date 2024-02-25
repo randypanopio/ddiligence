@@ -16,29 +16,28 @@ on:
 # runs ONLY necessary tests of firebase cloud functions [firebase_functions]
 # runs ONLY necessary tests and workflows of Flask API backend [app_flask]
 
-
 jobs:
-  check-commit-tags:
+  check-skip-tag:
     runs-on: ubuntu-latest    
+    outputs:
+      skip_all: ${{ steps.set_skip_all.outputs.skip_all }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Check if commit message contains [skip-all]
-        id: check_skip_all
+        id: set_skip_all
         run: |
           if grep -qiE "\[skip-all\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "[skip-all] tag found in commit message."
             echo "::set-output name=skip_all::true"
           else
-            echo "[skip-all] tag not found in commit message."
             echo "::set-output name=skip_all::false"
           fi
 
   check-admin-perms:
     runs-on: ubuntu-latest
-    needs: check-commit-tags
-    if: needs.check-commit-tags.outputs.skip_all != 'true'
+    needs: check-skip-tag
+    if: needs.check-skip-tag.outputs.skip_all == 'true'
     steps:
       - name: Check user permissions
         uses: actions-cool/check-user-permission@v2
@@ -57,22 +56,46 @@ jobs:
             exit 1  # Exit with failure code
           fi
 
-  # check-tags-client_react:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
-  #     - name: Check commit message for specific tags to run client_react testsuite
-  #       run: |
-  #         if grep -qiE 
-  #         "\[app_flask\]|\[firebase_functions\]|\[skip-all\]|\[skip ci\]" 
-  #         <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; 
-  #         then
-  #           echo 
-  #           "Skipping client react tests as commit message contains one of the following:            
-  #           [app_flask], [firebase_functions], [skip-all], or [skip ci]."
-  #           exit 78  # Exit with a neutral code
-  #         else
-  #           echo "Proceeding with client_react test suite"
-  #         fi
-         
+  check-remaining-tags:
+    runs-on: ubuntu-latest
+    needs: check-skip-tag
+    if: needs.check-skip-tag.outputs.skip_all != 'true'
+
+    outputs:
+      client_react: ${{ steps.set_client_react.outputs.client_react }}
+      firebase_functions: ${{ steps.set_firebase_functions.outputs.firebase_functions }}
+      app_flask: ${{ steps.set_app_flask.outputs.app_flask }}
+
+    steps:
+      - name: Check if commit message contains [client_react]
+        id: set_client_react
+        run: |
+          if grep -qiE "\[client_react\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
+            echo "::set-output name=client_react::true"
+          else
+            echo "::set-output name=client_react::false"
+          fi
+
+      - name: Check if commit message contains [firebase_functions]
+        id: set_firebase_functions
+        run: |
+          if grep -qiE "\[firebase_functions\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
+            echo "::set-output name=firebase_functions::true"
+          else
+            echo "::set-output name=firebase_functions::false"
+          fi
+
+      - name: Check if commit message contains [app_flask]
+        id: set_app_flask
+        run: |
+          if grep -qiE "\[app_flask\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
+            echo "::set-output name=app_flask::true"
+          else
+            echo "::set-output name=app_flask::false"
+          fi
+
+      - name: Run all suites if no tags found
+        if: steps.set_client_react.outputs.client_react == 'false' && steps.set_firebase_functions.outputs.firebase_functions == 'false' && steps.set_app_flask.outputs.app_flask == 'false'
+        run: |
+          # Run all three suites
+          echo "Running all suites..."
