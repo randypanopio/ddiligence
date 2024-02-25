@@ -17,6 +17,45 @@ on:
 # [app_flask] runs ONLY necessary tests and workflows of Flask API backend 
 
 jobs:
+  check-skip-tag:
+    runs-on: ubuntu-latest    
+    outputs:
+      skip_all: ${{ steps.set_skip_all.outputs.skip_all }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check if commit message contains [skip-all]
+        id: set_skip_all
+        run: |
+          if grep -qiE "\[skip-all\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
+            echo "skip_all=true" >> $GITHUB_STATE
+          else
+          echo "skip_all=false" >> $GITHUB_STATE
+          fi
+
+  check-admin-perms:
+    runs-on: ubuntu-latest
+    needs: check-skip-tag
+    if: needs.check-skip-tag.outputs.skip_all == 'true'
+    steps:
+      - name: Check user permissions
+        uses: actions-cool/check-user-permission@v2
+        id: check
+        with:
+          require: 'admin'
+          check-contributor: true
+    
+      - name: Check if user is admin
+        run: |
+          if [[ "${{ steps.check.outputs.user-permission }}" == "admin" ]]; then
+            echo "User is an admin. Skipping pipeline execution."
+            exit 0  # Exit with success code
+          else
+            echo "User is not an admin. Failing the job."
+            exit 1  # Exit with failure code
+          fi
+
   run-client_react-suite:
     runs-on: ubuntu-latest
     needs: check-tags-and-run
@@ -83,6 +122,8 @@ jobs:
 
   check-tags-and-run:
     runs-on: ubuntu-latest
+    needs: check-skip-tag
+    if: needs.check-skip-tag.outputs.skip_all != 'true'
     outputs:
       run_client_react: ${{ steps.set_client_react.outputs.client_react }}
       run_firebase_functions: ${{ steps.set_firebase_functions.outputs.firebase_functions }}
@@ -96,30 +137,27 @@ jobs:
         id: set_client_react
         run: |
           if grep -qiE "\[client_react\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "::set-output name=client_react::true"
-            echo "::set-output name=run_all_suites::true"
+            echo "client_react=true" >> $GITHUB_STATE
           else
-            echo "::set-output name=client_react::false"
+            echo "client_react=false" >> $GITHUB_STATE
           fi
 
       - name: Check if commit message contains [firebase_functions]
         id: set_firebase_functions
         run: |
           if grep -qiE "\[firebase_functions\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "::set-output name=firebase_functions::true"
-            echo "::set-output name=run_all_suites::true"
+            echo "firebase_functions=true" >> $GITHUB_STATE
           else
-            echo "::set-output name=firebase_functions::false"
+            echo "firebase_functions=false" >> $GITHUB_STATE
           fi
 
       - name: Check if commit message contains [app_flask]
         id: set_app_flask
         run: |
           if grep -qiE "\[app_flask\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "::set-output name=app_flask::true"
-            echo "::set-output name=run_all_suites::true"
+            echo "app_flask=true" >> $GITHUB_STATE
           else
-            echo "::set-output name=app_flask::false"
+            echo "app_flask=false" >> $GITHUB_STATE
           fi
 
       - name: Set all_suites output
@@ -128,7 +166,7 @@ jobs:
           if [[ "${{ steps.set_client_react.outputs.client_react }}" == 'false' && \
                 "${{ steps.set_firebase_functions.outputs.firebase_functions }}" == 'false' && \
                 "${{ steps.set_app_flask.outputs.app_flask }}" == 'false' ]]; then
-            echo "::set-output name=all_suites::true"
+            echo "all_suites=true" >> $GITHUB_STATE
           else
-            echo "::set-output name=all_suites::false"
+            echo "all_suites=false" >> $GITHUB_STATE
           fi
