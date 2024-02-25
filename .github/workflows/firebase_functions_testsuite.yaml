@@ -1,4 +1,4 @@
-name: Staging - Flask API application Run Unit Test Suite # Tag: [app_flask]
+name: Staging - Firebase Cloud Functions Run Unit Test Suite # Tag: [firebase_functions]
 
 on:
   push:
@@ -18,8 +18,8 @@ jobs:
 
       - name: Check commit message for specific tags
         run: |
-          if grep -qiE "\[client_react\]|\[firebase_functions\]|\[skip-all\]|\[wip\]|\[skip ci\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "Skipping tests as commit message contains, [client_react], [firebase_functions], [skip-all], [wip], or [skip ci]."
+          if grep -qiE "\[client_react\]|\[app_flask\]|\[skip-all\]|\[wip\]|\[skip ci\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
+            echo "Skipping tests as commit message contains, [client_react], [app_flask], [skip-all], [wip], or [skip ci]."
             exit 78  # Exit with a neutral code
           else
             echo "Commit message does not contain any skip tags. Proceeding with tests."
@@ -29,14 +29,11 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./app_flask
+        working-directory: ./database/firebase/functions
     
     needs: check-commit
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -48,7 +45,7 @@ jobs:
 
       - name: Run tests
         run: |
-          python -m unittest discover -s tests  # Run Python tests
+          python -m unittest discover -s tests  # Run test on the functions/tests directory
 
       - name: Check test status and prevent merge/push on failure
         if: ${{ failure() }}
