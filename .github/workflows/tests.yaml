@@ -71,31 +71,25 @@ jobs:
         id: set_client_react
         run: |
           if grep -qiE "\[client_react\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "::set-output name=client_react::true"
+            echo "client_react=true" >> $GITHUB_STATE
           else
-            echo "::set-output name=client_react::false"
+            echo "client_react=false" >> $GITHUB_STATE
           fi
 
       - name: Check if commit message contains [firebase_functions]
         id: set_firebase_functions
         run: |
           if grep -qiE "\[firebase_functions\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "::set-output name=firebase_functions::true"
+            echo "firebase_functions=true" >> $GITHUB_STATE
           else
-            echo "::set-output name=firebase_functions::false"
+            echo "firebase_functions=false" >> $GITHUB_STATE
           fi
 
       - name: Check if commit message contains [app_flask]
         id: set_app_flask
         run: |
           if grep -qiE "\[app_flask\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "::set-output name=app_flask::true"
+            echo "app_flask=true" >> $GITHUB_STATE
           else
-            echo "::set-output name=app_flask::false"
+            echo "app_flask=false" >> $GITHUB_STATE
           fi
-
-      - name: Run all suites if no tags found
-        if: steps.set_client_react.outputs.client_react == 'false' && steps.set_firebase_functions.outputs.firebase_functions == 'false' && steps.set_app_flask.outputs.app_flask == 'false'
-        run: |
-          # Run all three suites
-          echo "Running all suites..."
