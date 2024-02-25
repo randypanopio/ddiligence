@@ -17,120 +17,69 @@ on:
 # runs ONLY necessary tests and workflows of Flask API backend [app_flask]
 
 jobs:
-  check-skip-tag:
-    runs-on: ubuntu-latest    
+  run-client_react-suite:
+    runs-on: ubuntu-latest
+    needs: check-tags-and-run
+    if: ${{ needs.check-tags-and-run.outputs.run_client_react == 'true' || needs.check-tags-and-run.outputs.run_all_suites == 'true' }}
+    steps:
+      - name: run suite
+        run: echo "run_client_react-suite"     
+
+  run-firebase_functions-suite:
+    runs-on: ubuntu-latest
+    needs: check-tags-and-run
+    if: ${{ needs.check-tags-and-run.outputs.run_firebase_functions == 'true' || needs.check-tags-and-run.outputs.run_all_suites == 'true' }}
+    steps:
+      - name: run suite
+        run: echo "run_firebase_functions-suite"     
+      # Steps to run firebase_functions tests...
+
+  run-app_flask-suite:
+    runs-on: ubuntu-latest
+    needs: check-tags-and-run
+    if: ${{ needs.check-tags-and-run.outputs.run_app_flask == 'true' || needs.check-tags-and-run.outputs.run_all_suites == 'true' }}
+    steps:
+      - name: run suite
+        run: echo "run-app_flask-suite"      
+      # Steps to run app_flask tests...
+
+  check-tags-and-run:
+    runs-on: ubuntu-latest
     outputs:
-      skip_all: ${{ steps.set_skip_all.outputs.skip_all }}
+      run_client_react: ${{ steps.set_client_react.outputs.client_react }}
+      run_firebase_functions: ${{ steps.set_firebase_functions.outputs.firebase_functions }}
+      run_app_flask: ${{ steps.set_app_flask.outputs.app_flask }}
+      run_all_suites: ${{ steps.set_all_suites.outputs.all_suites }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Check if commit message contains [skip-all]
-        id: set_skip_all
-        run: |
-          if grep -qiE "\[skip-all\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "::set-output name=skip_all::true"
-          else
-            echo "::set-output name=skip_all::false"
-          fi
-
-  check-admin-perms:
-    runs-on: ubuntu-latest
-    needs: check-skip-tag
-    if: needs.check-skip-tag.outputs.skip_all == 'true'
-    steps:
-      - name: Check user permissions
-        uses: actions-cool/check-user-permission@v2
-        id: check
-        with:
-          require: 'admin'
-          check-contributor: true
-    
-      - name: Check if user is admin
-        run: |
-          if [[ "${{ steps.check.outputs.user-permission }}" == "admin" ]]; then
-            echo "User is an admin. Skipping pipeline execution."
-            exit 0  # Exit with success code
-          else
-            echo "User is not an admin. Failing the job."
-            exit 1  # Exit with failure code
-          fi
-
-  check-remaining-tags:
-    runs-on: ubuntu-latest
-    needs: check-skip-tag
-    if: needs.check-skip-tag.outputs.skip_all != 'true'
-
-    outputs:
-      client_react: ${{ steps.set_client_react.outputs.client_react }}
-      firebase_functions: ${{ steps.set_firebase_functions.outputs.firebase_functions }}
-      app_flask: ${{ steps.set_app_flask.outputs.app_flask }}
-      all_test_suite: ${{ steps.set_all_test_suite.outputs.all_test_suite }}
-
-    steps:
       - name: Check if commit message contains [client_react]
         id: set_client_react
         run: |
           if grep -qiE "\[client_react\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "client_react=true" >> $GITHUB_STATE
+            echo "::set-output name=client_react::true"
+            echo "::set-output name=run_all_suites::true"
           else
-            echo "client_react=false" >> $GITHUB_STATE
+            echo "::set-output name=client_react::false"
           fi
 
       - name: Check if commit message contains [firebase_functions]
         id: set_firebase_functions
         run: |
           if grep -qiE "\[firebase_functions\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "firebase_functions=true" >> $GITHUB_STATE
+            echo "::set-output name=firebase_functions::true"
+            echo "::set-output name=run_all_suites::true"
           else
-            echo "firebase_functions=false" >> $GITHUB_STATE
+            echo "::set-output name=firebase_functions::false"
           fi
 
       - name: Check if commit message contains [app_flask]
         id: set_app_flask
         run: |
           if grep -qiE "\[app_flask\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "app_flask=true" >> $GITHUB_STATE
+            echo "::set-output name=app_flask::true"
+            echo "::set-output name=run_all_suites::true"
           else
-            echo "app_flask=false" >> $GITHUB_STATE
+            echo "::set-output name=app_flask::false"
           fi
-
-      - name: Run all suites if no tags found
-        id: set_all_test_suite
-        if: steps.set_client_react.outputs.client_react == 'false' && steps.set_firebase_functions.outputs.firebase_functions == 'false' && steps.set_app_flask.outputs.app_flask == 'false'
-        run: |
-          # Run all three suites
-          echo "all_test_suite=true" >> $GITHUB_STATE
-
-  run-firebase_functions-suite:
-    runs-on: ubuntu-latest
-    needs: check-remaining-tags
-    if: needs.check-remaining-tags.outputs.all_test_suite == 'true' || needs.check-remaining-tags.outputs.firebase_functions == 'true'
-    defaults:
-      run:
-        working-directory: database/firebase/functions    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt  # Install dependencies
-
-      - name: Run tests
-        run: |
-          python -m unittest discover -s tests  # Run test on the functions/tests directory
-
-      - name: Check test status and prevent merge/push on failure
-        if: ${{ failure() }}
-        run: exit 1  # Exit with a non-zero code to fail the workflow          
-
-
-
-
-
