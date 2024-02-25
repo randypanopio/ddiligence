@@ -3,10 +3,10 @@ name: Staging - Firebase Cloud Functions Run Unit Test Suite # Tag: [firebase_fu
 on:
   push:
     branches:
-      - staging
+      - stagingfoo
   pull_request:
     branches:
-      - staging
+      - stagingfoo
 
 jobs:
   check-commit:

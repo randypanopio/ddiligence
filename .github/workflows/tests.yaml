@@ -1,0 +1,72 @@
+name: Executes Tests
+
+on:
+  push:
+    branches:
+      - staging
+      - main
+  pull_request:
+    branches:
+        - staging
+        - main
+
+# Tags:
+# skips all tests [skip-all], also checks if tag is set by admin
+# runs ONLY necessary tests and workflows of client_react [client_react]
+# runs ONLY necessary tests of firebase cloud functions [firebase_functions]
+# runs ONLY necessary tests and workflows of Flask API backend [app_flask]
+
+jobs:
+  check-admin-skip:
+    runs-on: ubuntu-latest    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check user perms
+        uses: actions-cool/check-user-permission@v2
+        id: check
+        with:
+          require: 'write'
+          check-contributor: true
+
+      - run: echo "user-permission = ${{ steps.check.outputs.user-permission }}"
+      - run: echo "require-result = ${{ steps.check.outputs.require-result }}"
+      - run: echo "check-result = ${{ steps.check.outputs.check-result }}"
+
+      # - name: Verify admin user
+      #   run: |
+      #     # Call a script to verify if the committer is an admin
+      #     # Pass the username of the committer to the script
+      #     # Script should exit with a non-zero code if the user is not an admin
+      #     # Example:
+      #     python verify_admin.py ${{ github.actor }}
+
+      # - name: Checks commit tags for skipping pipeline
+      #   run: |
+      #     if grep -qiE "\[client_react\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
+      #       echo "Skipping test suite set by admin"
+      #       exit 78  # Exit with a neutral code
+      #     else
+      #       echo "Proceeding with tests..."
+      #     fi   
+
+  # check-tags-client_react:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #     - name: Check commit message for specific tags to run client_react testsuite
+  #       run: |
+  #         if grep -qiE 
+  #         "\[app_flask\]|\[firebase_functions\]|\[skip-all\]|\[skip ci\]" 
+  #         <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; 
+  #         then
+  #           echo 
+  #           "Skipping client react tests as commit message contains one of the following:            
+  #           [app_flask], [firebase_functions], [skip-all], or [skip ci]."
+  #           exit 78  # Exit with a neutral code
+  #         else
+  #           echo "Proceeding with client_react test suite"
+  #         fi
+         

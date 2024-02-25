@@ -1,0 +1,14 @@
+name: Deployments
+
+concurrency: production
+
+# main is a protected branch, only PRs get approved
+on:
+  pull_request:
+    branches:
+        - main
+
+jobs:
+    deploy-firebase-functions:
+        environment: production
+        runs-on: ubuntu-latest        
