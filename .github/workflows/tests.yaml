@@ -58,16 +58,16 @@ jobs:
 
   run-client_react-suite:
     runs-on: ubuntu-latest
-    needs: check-tags-and-run
-    if: ${{ needs.check-tags-and-run.outputs.run_client_react == 'true' || needs.check-tags-and-run.outputs.run_all_suites == 'true' }}
+    needs: [check-tags-and-run, check-run-all-suite]
+    if: ${{ needs.check-tags-and-run.outputs.run_client_react == 'true' || needs.check-run-all-suite.outputs.run_all_suites == 'true' }}
     steps:
       - name: run suite
         run: echo "run_client_react-suite"     
 
   run-firebase_functions-suite:
     runs-on: ubuntu-latest
-    needs: check-tags-and-run
-    if: ${{ needs.check-tags-and-run.outputs.run_firebase_functions == 'true' || needs.check-tags-and-run.outputs.run_all_suites == 'true' }}
+    needs: [check-tags-and-run, check-run-all-suite]
+    if: ${{ needs.check-tags-and-run.outputs.run_firebase_functions == 'true' || needs.check-run-all-suite.outputs.run_all_suites == 'true' }}
     defaults:
       run:
         working-directory: database/firebase/functions
@@ -94,8 +94,8 @@ jobs:
 
   run-app_flask-suite:
     runs-on: ubuntu-latest
-    needs: check-tags-and-run
-    if: ${{ needs.check-tags-and-run.outputs.run_app_flask == 'true' || needs.check-tags-and-run.outputs.run_all_suites == 'true' }}
+    needs: [check-tags-and-run, check-run-all-suite]
+    if: ${{ needs.check-tags-and-run.outputs.run_app_flask == 'true' || needs.check-run-all-suite.outputs.run_all_suites == 'true' }}
     defaults:
       run:
         working-directory: ./app_flask
@@ -120,6 +120,26 @@ jobs:
         if: ${{ failure() }}
         run: exit 1  # Exit with a non-zero code to fail the workflow
 
+  check-run-all-suite:
+    runs-on: ubuntu-latest
+    needs: check-tags-and-run
+    outputs:
+      run_all_suites: ${{ steps.set_all_suites.outputs.all_suites }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set all_suites output
+        id: set_all_suites
+        run: |
+          if [[ "${{ needs.check-tags-and-run.outputs.run_app_flask }}" == 'false' && \
+                "${{ needs.check-tags-and-run.outputs.run_client_react }}" == 'false' && \
+                "${{ needs.check-tags-and-run.outputs.run_app_flask.run_firebase_functions }}" == 'false' ]]; then
+            echo "all_suites=true" >> $GITHUB_STATE
+          else
+            echo "all_suites=false" >> $GITHUB_STATE
+          fi
+
   check-tags-and-run:
     runs-on: ubuntu-latest
     needs: check-skip-tag
@@ -128,7 +148,6 @@ jobs:
       run_client_react: ${{ steps.set_client_react.outputs.client_react }}
       run_firebase_functions: ${{ steps.set_firebase_functions.outputs.firebase_functions }}
       run_app_flask: ${{ steps.set_app_flask.outputs.app_flask }}
-      run_all_suites: ${{ steps.set_all_suites.outputs.all_suites }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -158,15 +177,4 @@ jobs:
             echo "app_flask=true" >> $GITHUB_STATE
           else
             echo "app_flask=false" >> $GITHUB_STATE
-          fi
-
-      - name: Set all_suites output
-        id: set_all_suites
-        run: |
-          if [[ "${{ steps.set_client_react.outputs.client_react }}" == 'false' && \
-                "${{ steps.set_firebase_functions.outputs.firebase_functions }}" == 'false' && \
-                "${{ steps.set_app_flask.outputs.app_flask }}" == 'false' ]]; then
-            echo "all_suites=true" >> $GITHUB_STATE
-          else
-            echo "all_suites=false" >> $GITHUB_STATE
           fi
