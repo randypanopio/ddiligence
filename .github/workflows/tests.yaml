@@ -139,7 +139,7 @@ jobs:
           else
             echo "all_suites=false" >> $GITHUB_STATE
           fi
-          
+
 
   check-tags-and-run:
     runs-on: ubuntu-latest
@@ -156,10 +156,13 @@ jobs:
       - name: Check if commit message contains [client_react]
         id: set_client_react
         run: |
+          echo "hello"
           if grep -qiE "\[client_react\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
             echo "client_react=true" >> $GITHUB_STATE
+            echo "runs client react"
           else
             echo "client_react=false" >> $GITHUB_STATE
+            echo "doesnt runs client react"
           fi
 
       - name: Check if commit message contains [firebase_functions]
