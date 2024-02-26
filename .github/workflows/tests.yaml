@@ -149,20 +149,20 @@ jobs:
         id: set_client_react
         run: |
           if grep -qiE "\[client_react\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "client_react=true" >> $GITHUB_STATE
-            echo "run_all_suites=true" >> $GITHUB_STATE
+            echo "client_react=true" >> $GITHUB_OUTPUT
+            echo "run_all_suites=true" >> $GITHUB_OUTPUT
           else
-            echo "client_react=false" >> $GITHUB_STATE
+            echo "client_react=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Check if commit message contains [firebase_functions]
         id: set_firebase_functions
         run: |
           if grep -qiE "\[firebase_functions\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "firebase_functions=true" >> $GITHUB_STATE
-            echo "run_all_suites=true" >> $GITHUB_STATE
+            echo "firebase_functions=true" >> $GITHUB_OUTPUT
+            echo "run_all_suites=true" >> $GITHUB_OUTPUT
           else
-            echo "firebase_functions=false" >> $GITHUB_STATE
+            echo "firebase_functions=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Check if commit message contains [app_flask]
@@ -170,9 +170,9 @@ jobs:
         run: |
           if grep -qiE "\[app_flask\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
             echo "::set-output name=app_flask::true"
-            echo "::set-output name=run_all_suites::true"
+            echo "app_flask=true" >> $GITHUB_OUTPUT         
           else
-            echo "app_flask=false" >> $GITHUB_STATE
+            echo "app_flask=false" >> $GITHUB_OUTPUT
           fi
 
       #i dont htink this works i think it does
@@ -182,7 +182,7 @@ jobs:
           if [[ "${{ steps.set_client_react.outputs.client_react }}" == 'false' && \
                 "${{ steps.set_firebase_functions.outputs.firebase_functions }}" == 'false' && \
                 "${{ steps.set_app_flask.outputs.app_flask }}" == 'false' ]]; then
-            echo "all_suites=true" >> $GITHUB_STATE
+            echo "all_suites=true" >> $GITHUB_OUTPUT
           else
-            echo "all_suites=false" >> $GITHUB_STATE
+            echo "all_suites=false" >> $GITHUB_OUTPUT
           fi
