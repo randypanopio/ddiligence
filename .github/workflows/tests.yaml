@@ -169,8 +169,8 @@ jobs:
         id: set_app_flask
         run: |
           if grep -qiE "\[app_flask\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
-            echo "app_flask=true" >> $GITHUB_STATE
-            echo "run_all_suites=true" >> $GITHUB_STATE
+            echo "::set-output name=app_flask::true"
+            echo "::set-output name=run_all_suites::true"
           else
             echo "app_flask=false" >> $GITHUB_STATE
           fi
