@@ -1,0 +1,17 @@
+name: Deployments
+
+concurrency: production
+
+# main is a protected branch, only PRs get approved
+on:
+  pull_request:
+    branches:
+        - mainfoo
+
+jobs:
+    deploy-firebase-functions:
+        runs-on: ubuntu-latest        
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3

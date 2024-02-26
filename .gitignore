@@ -5,10 +5,11 @@
 /client_react/.pnp
 .pnp.js
 
-.do_not_track/
+do_not_track/
 
 /app_flask/venv
 */__pycache__
+*.code-workspace
 
 
 # testing
