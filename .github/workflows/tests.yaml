@@ -172,7 +172,6 @@ jobs:
             echo "app_flask=false" >> $GITHUB_OUTPUT
           fi
 
-      #i dont htink this works i think it does
       - name: Set all_suites output
         id: set_all_suites
         run: |
