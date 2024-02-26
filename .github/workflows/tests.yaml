@@ -58,16 +58,20 @@ jobs:
 
   run-client_react-suite:
     runs-on: ubuntu-latest
-    needs: [check-tags-and-run, check-run-all-suite]
-    if: ${{ needs.check-tags-and-run.outputs.run_client_react == 'true' || needs.check-run-all-suite.outputs.run_all_suites == 'true' }}
+    needs: check-tags-and-run
+    if: ${{ needs.check-tags-and-run.outputs.run_client_react == 'true' || needs.check-tags-and-run.outputs.run_all_suites == 'true' }}
     steps:
       - name: run suite
         run: echo "run_client_react-suite"     
 
+      - name: echo trigger
+        run: |
+          echo "run_client_react: ${{ needs.check-tags-and-run.outputs.run_client_react}}, run_all_suites: ${{needs.check-tags-and-run.outputs.run_all_suites}}"        
+
   run-firebase_functions-suite:
     runs-on: ubuntu-latest
-    needs: [check-tags-and-run, check-run-all-suite]
-    if: ${{ needs.check-tags-and-run.outputs.run_firebase_functions == 'true' || needs.check-run-all-suite.outputs.run_all_suites == 'true' }}
+    needs: check-tags-and-run
+    if: ${{ needs.check-tags-and-run.outputs.run_firebase_functions == 'true' || needs.check-tags-and-run.outputs.run_all_suites == 'true' }}
     defaults:
       run:
         working-directory: database/firebase/functions
@@ -79,6 +83,10 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.x
+
+      - name: echo trigger
+        run: |
+          echo "run_firebase_functions: ${{ needs.check-tags-and-run.outputs.run_firebase_functions}}, run_all_suites: ${{needs.check-tags-and-run.outputs.run_all_suites}}"
 
       - name: Install dependencies
         run: |
@@ -94,8 +102,8 @@ jobs:
 
   run-app_flask-suite:
     runs-on: ubuntu-latest
-    needs: [check-tags-and-run, check-run-all-suite]
-    if: ${{ needs.check-tags-and-run.outputs.run_app_flask == 'true' || needs.check-run-all-suite.outputs.run_all_suites == 'true' }}
+    needs: check-tags-and-run
+    if: ${{ needs.check-tags-and-run.outputs.run_app_flask == 'true' || needs.check-tags-and-run.outputs.run_all_suites == 'true' }}
     defaults:
       run:
         working-directory: ./app_flask
@@ -107,6 +115,10 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.x
+
+      - name: echo trigger
+        run: |
+          echo "run_app_flask: ${{ needs.check-tags-and-run.outputs.run_app_flask}}, run_all_suites: ${{needs.check-tags-and-run.outputs.run_all_suites}}"
 
       - name: Install dependencies
         run: |
@@ -120,27 +132,6 @@ jobs:
         if: ${{ failure() }}
         run: exit 1  # Exit with a non-zero code to fail the workflow
 
-  check-run-all-suite:
-    runs-on: ubuntu-latest
-    needs: check-tags-and-run
-    outputs:
-      run_all_suites: ${{ steps.set_all_suites.outputs.all_suites }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set all_suites output
-        id: set_all_suites
-        run: |
-          if [[ "${{ needs.check-tags-and-run.outputs.run_app_flask }}" == 'false' && \
-                "${{ needs.check-tags-and-run.outputs.run_client_react }}" == 'false' && \
-                "${{ needs.check-tags-and-run.outputs.run_app_flask.run_firebase_functions }}" == 'false' ]]; then
-            echo "all_suites=true" >> $GITHUB_STATE
-          else
-            echo "all_suites=false" >> $GITHUB_STATE
-          fi
-
-
   check-tags-and-run:
     runs-on: ubuntu-latest
     needs: check-skip-tag
@@ -149,6 +140,7 @@ jobs:
       run_client_react: ${{ steps.set_client_react.outputs.client_react }}
       run_firebase_functions: ${{ steps.set_firebase_functions.outputs.firebase_functions }}
       run_app_flask: ${{ steps.set_app_flask.outputs.app_flask }}
+      run_all_suites: ${{ steps.set_all_suites.outputs.all_suites }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -156,13 +148,11 @@ jobs:
       - name: Check if commit message contains [client_react]
         id: set_client_react
         run: |
-          echo "hello"
           if grep -qiE "\[client_react\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
             echo "client_react=true" >> $GITHUB_STATE
-            echo "runs client react"
+            echo "run_all_suites=true" >> $GITHUB_STATE
           else
             echo "client_react=false" >> $GITHUB_STATE
-            echo "doesnt runs client react"
           fi
 
       - name: Check if commit message contains [firebase_functions]
@@ -170,6 +160,7 @@ jobs:
         run: |
           if grep -qiE "\[firebase_functions\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
             echo "firebase_functions=true" >> $GITHUB_STATE
+            echo "run_all_suites=true" >> $GITHUB_STATE
           else
             echo "firebase_functions=false" >> $GITHUB_STATE
           fi
@@ -179,8 +170,19 @@ jobs:
         run: |
           if grep -qiE "\[app_flask\]" <<< "$(git log --format=%B -n 1 ${{ github.sha }})"; then
             echo "app_flask=true" >> $GITHUB_STATE
+            echo "run_all_suites=true" >> $GITHUB_STATE
           else
             echo "app_flask=false" >> $GITHUB_STATE
           fi
 
-          
+      #i dont htink this works i think it does
+      - name: Set all_suites output
+        id: set_all_suites
+        run: |
+          if [[ "${{ steps.set_client_react.outputs.client_react }}" == 'false' && \
+                "${{ steps.set_firebase_functions.outputs.firebase_functions }}" == 'false' && \
+                "${{ steps.set_app_flask.outputs.app_flask }}" == 'false' ]]; then
+            echo "all_suites=true" >> $GITHUB_STATE
+          else
+            echo "all_suites=false" >> $GITHUB_STATE
+          fi
