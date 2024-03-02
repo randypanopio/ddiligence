@@ -1,3 +1,6 @@
+'''
+    Retrieves ticker data using yfinance library
+'''
 import yfinance as yf
 
 def get_data(ticker: str, start: str, end: str):
@@ -11,7 +14,6 @@ def get_data(ticker: str, start: str, end: str):
     '''
     ticker = ticker.upper()
     # TODO add validation but dunno how it works really
-    
     stock_data = yf.download(ticker, start=start, end=end)
     stock_data_entries = []
     for date, row in stock_data.iterrows():
