@@ -9,7 +9,10 @@ v_prefix = '/api/v1/'
 
 @flask_app.route(f'{v_prefix}hello')
 def hello():
-    # TODO use me to check health, EG if other external api i would be usingis available, if db is avail, etc.
+    '''
+        use me to do quick check health
+        checks if all connections are available
+    '''
     data = {'message': f'{v_prefix} API is available'}
     return jsonify(data)
 

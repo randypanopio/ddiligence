@@ -27,4 +27,3 @@ def get_historic_data():
     # TODO use me to check health, EG if other external api i would be usingis available, if db is avail, etc.
     data = {'message': f'{LIVE_VERSION} API is available'}
     return jsonify(data)
-

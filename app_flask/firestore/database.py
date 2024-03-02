@@ -1,3 +1,6 @@
+'''
+    Database Connection class and instance
+'''
 import os
 from typing import List
 from firebase_admin import firestore, credentials, initialize_app
@@ -29,7 +32,7 @@ class DatabaseManager:
         """
             Retrieves all available tickers from the database, EG. ['INTC', 'AMZN', ...]
         """
-        # TODO cache, should have a self ref of this and only update maybe every few hours
+        # Future TODO cache, should have a self ref of this and only update maybe every few hours
         print("bar")
         res = [doc.id for doc in self.db.collection("stocks_data").stream()]
         for var in res:

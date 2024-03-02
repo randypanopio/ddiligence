@@ -1,3 +1,7 @@
+'''
+    Author: Randy Panopio
+    a goofy lil flask app
+'''
 from flask import Flask
 from flask_cors import CORS
 from routes.firestore_data import firestore_data_bp
