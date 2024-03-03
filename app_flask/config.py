@@ -1,3 +1,3 @@
 """config vars"""
-LIVE_VERSION = '/api/v1/'
+ACTIVE_API_VERSION = '/api/v1/'
 DAY_FORMAT = '%Y-%m-%d'
