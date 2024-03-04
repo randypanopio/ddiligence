@@ -11,3 +11,8 @@ to run individual module unittests, stay in the functions directory and update t
 `python -m unittest discover -s logic/tests`
 
 tag [cloud_functions] in your pull request to  execute only the cd pipeline for cloud functions (otherwise you will be running the entire project's test suite.)
+
+
+# Deploying Functions
+on venv run
+`firebase deploy --only functions`

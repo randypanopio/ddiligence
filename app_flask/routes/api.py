@@ -27,3 +27,4 @@ def get_historic_data():
 @flask_app.route(f'{v_prefix}daily_messages')
 def get_daily_messages():
     return jsonify({})
+

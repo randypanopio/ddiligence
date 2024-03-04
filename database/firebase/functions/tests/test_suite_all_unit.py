@@ -2,14 +2,8 @@
     Test Suite for all current unittests
 """
 
-# import unittest
-
 from logic.tests.test_stock_data import TestGetStockData
 from utils.tests.test_utils import TestRetryWrapper
-
-# if __name__ == '__main__':
-#     unittest.main()
-
 
 import unittest
 
@@ -24,5 +18,7 @@ def suite():
     return suite
 
 if __name__ == '__main__':
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
