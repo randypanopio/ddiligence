@@ -1,0 +1,18 @@
+'''
+    Util routes like health checks and availability
+'''
+
+from flask import Blueprint, jsonify
+from config import ACTIVE_API_VERSION
+
+helpers_bp = Blueprint("utils", __name__)
+
+@helpers_bp.route(f'{ACTIVE_API_VERSION}hello', methods=['GET'])
+def hello():
+    '''
+        TODO actually implement me
+        use me to do quick check health
+        checks if all connections are available
+    '''
+    data = {'message': f'{ACTIVE_API_VERSION} API is available'}
+    return jsonify(data)

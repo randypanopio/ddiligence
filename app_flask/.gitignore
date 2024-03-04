@@ -1,3 +1,7 @@
 venv/
 secrets/
 super_secrets/
+
+
+# local testing 
+admin_debug.py

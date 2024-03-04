@@ -5,7 +5,9 @@ import unittest
 from routes.tests.test_firestore_data import TestFireStoreApi
 
 def suites():
-    """TODO docstring"""
+    '''
+        
+    '''
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestFireStoreApi))
