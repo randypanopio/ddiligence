@@ -3,17 +3,16 @@
 """
 import random
 from datetime import datetime
-from typing import List, Tuple
 from flask import jsonify, Blueprint, request, abort
 from firestore.database import db_manager
-from routes.utils import validate_and_convert_args
+from routes.utils import validate_and_convert_args, validate_date_range
 from config import ACTIVE_API_VERSION, DAY_FORMAT
 
 firestore_data_bp = Blueprint("database", __name__)
 
 
 @firestore_data_bp.route(f'{ACTIVE_API_VERSION}stocks_data', methods=['GET'])
-def get_historic_data() -> str:
+def get_historic_data():
     """_summary_
 
     :return: _description_
@@ -25,7 +24,8 @@ def get_historic_data() -> str:
     arg_date_end = request.args.get('date_end')
 
     # Validate and convert ticker argument
-    v_ticker, ticker = validate_and_convert_args('ticker', arg_ticker, str)
+    v_ticker, ticker = validate_and_convert_args(
+        'ticker', arg_ticker, str)  # type: ignore
     if not v_ticker:
         print(ticker)
         abort(400, description={'error': ticker})
@@ -33,7 +33,7 @@ def get_historic_data() -> str:
     # Validate and convert date_start argument
     v_date_start, date_start = validate_and_convert_args(
         'date_start',
-        arg_date_start,
+        arg_date_start,  # type: ignore
         datetime,
         datetime.strptime,
         *(arg_date_start, DAY_FORMAT))
@@ -44,35 +44,31 @@ def get_historic_data() -> str:
     # Validate and convert date_end argument
     v_date_end, date_end = validate_and_convert_args(
         'date_end',
-        arg_date_end,
+        arg_date_end,  # type: ignore
         datetime,
         datetime.strptime,
         *(arg_date_end, DAY_FORMAT))
     if not v_date_end:
         abort(400, description={'error': date_end})
 
-    # check if ticker avail
+    # check if ticker is avail
     if ticker not in db_manager.get_available_tickers():
         abort(404, description={'error': f"ticker {ticker} not found"})
 
-    # check if date range is valid
-    try:
-        r_start = request.args.get('date_start')
-        r_end = request.args.get('date_end')
-        start = datetime.strptime(r_start, DAY_FORMAT)
-        end = datetime.strptime(r_end, DAY_FORMAT)
-    except ValueError:
-        message = "something"
-        print(message)
-        abort(404, description={'error': message})
+    valid_date_range = validate_date_range(date_start, date_end)  # type: ignore
+    if not valid_date_range:
+        abort(400, description=
+              {'error': f"Invalid date ranges start: {date_start}, end: {date_end}, provided."})
 
-    # TODO use me to check health, EG if other external api i would be usingis available, if db is avail, etc.
+    # retrieve 
+
+
     data = {'message': f'{ACTIVE_API_VERSION} API is available'}
     return jsonify(data)
 
 
 @firestore_data_bp.route(f'{ACTIVE_API_VERSION}banner_messages', methods=['GET'])
-def get_daily_banner_messages() -> List[Tuple[str, str, List[str]]]:
+def get_daily_banner_messages():
     '''
         Retrieves randomized set of available banner messages    
     '''
