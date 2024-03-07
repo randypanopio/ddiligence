@@ -17,17 +17,14 @@ def get_data(ticker: str, start: str, end: str):
     stock_data = yf.download(ticker, start=start, end=end)
     stock_data_entries = []
     for date, row in stock_data.iterrows():
-        date_str = date.strftime("%Y-%m-%d")
         entry = {
-            "date": date_str,
-            "data": {
-                "Open": row["Open"],
-                "High": row["High"],
-                "Low": row["Low"],
-                "Close": row["Close"],
-                "Adj Close": row["Adj Close"],
-                "Volume": row["Volume"]
-            }
+            "date": date.strftime("%Y-%m-%d"),
+            "Open": row["Open"],
+            "High": row["High"],
+            "Low": row["Low"],
+            "Close": row["Close"],
+            "Adj Close": row["Adj Close"],
+            "Volume": row["Volume"]
         }
         stock_data_entries.append(entry)
     return stock_data_entries
