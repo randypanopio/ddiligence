@@ -6,7 +6,7 @@ from datetime import datetime
 from flask import jsonify, Blueprint, request, abort
 from firestore.database import db_manager
 from routes.utils import validate_and_convert_args, validate_date_range
-from config import ACTIVE_API_VERSION, DAY_FORMAT
+from config import ACTIVE_API_VERSION, DATE_FORMAT
 
 firestore_data_bp = Blueprint("database", __name__)
 
@@ -36,7 +36,7 @@ def get_historic_data():
         arg_date_start,  # type: ignore
         datetime,
         datetime.strptime,
-        *(arg_date_start, DAY_FORMAT))
+        *(arg_date_start, DATE_FORMAT))
     if not v_date_start:
         print(date_start)
         abort(400, description={'error': date_start})
@@ -47,7 +47,7 @@ def get_historic_data():
         arg_date_end,  # type: ignore
         datetime,
         datetime.strptime,
-        *(arg_date_end, DAY_FORMAT))
+        *(arg_date_end, DATE_FORMAT))
     if not v_date_end:
         abort(400, description={'error': date_end})
 
@@ -60,10 +60,8 @@ def get_historic_data():
         abort(400, description=
               {'error': f"Invalid date ranges start: {date_start}, end: {date_end}, provided."})
 
-    # retrieve 
-
-
-    data = {'message': f'{ACTIVE_API_VERSION} API is available'}
+    # retrieve data
+    data = db_manager.get_ticker_data(ticker, date_start, date_end) # type: ignore
     return jsonify(data)
 
 

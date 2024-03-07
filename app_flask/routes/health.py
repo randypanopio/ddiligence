@@ -5,9 +5,9 @@
 from flask import Blueprint, jsonify
 from config import ACTIVE_API_VERSION
 
-helpers_bp = Blueprint("utils", __name__)
+health_bp = Blueprint("utils", __name__)
 
-@helpers_bp.route(f'{ACTIVE_API_VERSION}hello', methods=['GET'])
+@health_bp.route(f'{ACTIVE_API_VERSION}hello', methods=['GET'])
 def hello():
     '''
         TODO actually implement me
