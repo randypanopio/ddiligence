@@ -1,9 +1,11 @@
 """
     routes that use the firestore db
 """
+import hashlib
 import random
 from datetime import datetime
 from flask import jsonify, Blueprint, request, abort
+
 from firestore.database import db_manager
 from routes.utils import validate_and_convert_args, validate_date_range
 from config import ACTIVE_API_VERSION, DATE_FORMAT
@@ -13,9 +15,10 @@ firestore_data_bp = Blueprint("database", __name__)
 
 @firestore_data_bp.route(f'{ACTIVE_API_VERSION}stocks_data', methods=['GET'])
 def get_historic_data():
-    """_summary_
+    """
+    List of ticker data based on passed range
 
-    :return: _description_
+    :return: json of list of data entries
     :rtype: str
     """
     # Check required arguements
@@ -24,8 +27,7 @@ def get_historic_data():
     arg_date_end = request.args.get('date_end')
 
     # Validate and convert ticker argument
-    v_ticker, ticker = validate_and_convert_args(
-        'ticker', arg_ticker, str)  # type: ignore
+    v_ticker, ticker = validate_and_convert_args('ticker', arg_ticker, str)  # type: ignore
     if not v_ticker:
         print(ticker)
         abort(400, description={'error': ticker})
@@ -55,28 +57,43 @@ def get_historic_data():
     if ticker not in db_manager.get_available_tickers():
         abort(404, description={'error': f"ticker {ticker} not found"})
 
-    valid_date_range = validate_date_range(date_start, date_end)  # type: ignore
+    valid_date_range = validate_date_range(
+        date_start, date_end)  # type: ignore
     if not valid_date_range:
         abort(400, description=
-              {'error': f"Invalid date ranges start: {date_start}, end: {date_end}, provided."})
+              {'error': f"Invalid date ranges, start: {date_start}, end: {date_end}, provided."})
 
     # retrieve data
-    data = db_manager.get_ticker_data(ticker, date_start, date_end) # type: ignore
+    data = db_manager.get_ticker_data(
+        ticker, date_start, date_end)  # type: ignore
     return jsonify(data)
-
 
 @firestore_data_bp.route(f'{ACTIVE_API_VERSION}banner_messages', methods=['GET'])
 def get_daily_banner_messages():
-    '''
-        Retrieves randomized set of available banner messages    
-    '''
-    messages = db_manager.get_daily_messages()
+    """
+    Retrieves randomized (seeded) set of available banner messages
 
-    # TODO create season and themes for the messages, (Use tags to influence seed)
-    # Generate today's seed based on the current date
-    # TODO it should be by location and timezone too
-    seed = datetime.utcnow().strftime('%Y-%m-%d')
-    random.seed(seed)
+    :return: json of list if messages
+    :rtype: str
+    """
+    messages = db_manager.get_daily_messages()
+    # TODO create season and themes for the messages, (Use tags to filter instead of seed)
+
+    # Generate seed using todays date and ip
+    date = datetime.utcnow().strftime('%Y-%m-%d')
+    ip = request.remote_addr
+    if ip:
+        # bundle sets of ips for fast hash generation for seed
+        # could use geolocation, but want to stay away from using 3rd party libs
+        octets = ip.split('.')
+        first, last = octets[0], octets[-1]
+        seed = f"{date}-{first}-{last}"
+    else:
+        seed = date
+    hashed_seed = hashlib.md5(seed.encode(), usedforsecurity=False).hexdigest()
+
+    print(f"date: {date}, ip: {ip}, seed: {seed}, hashedseed: {hashed_seed}")
+    random.seed(hashed_seed)
 
     # select up to 10 random indices from seed
     num_messages = len(messages)
