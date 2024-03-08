@@ -1,4 +1,4 @@
-# pylint: disable=C0111
+# pylint: disable=C0111, disable=C0413
 """
     Test Suite for all current unittests
 
@@ -17,19 +17,30 @@
 import sys
 import os
 import unittest
-# pylint: disable=C0413
 # Add the root directory to enable running this file directly
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(root_dir)
-from routes.tests.test_firestore_data import TestFirestoreDataAPI
 from routes.tests.test_utils import TestValidateAndConvertArgs, TestValidateDateRange
-
+from routes.tests.test_firestore_data import TestFirestoreDataAPI
 
 def routes_suite():
+    loader = []
+    loader.append(unittest.TestLoader(
+    ).loadTestsFromTestCase(TestFirestoreDataAPI))
+    loader.append(unittest.TestLoader().loadTestsFromTestCase(
+        TestValidateAndConvertArgs))
+    loader.append(unittest.TestLoader().loadTestsFromTestCase(
+        TestValidateDateRange))
+    return loader
+
+
+def local_suite():
+    """
+    Use me when running custom local test suites
+    """
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestFirestoreDataAPI))
-    suite.addTest(unittest.makeSuite(TestValidateAndConvertArgs))
-    suite.addTest(unittest.makeSuite(TestValidateDateRange))
+    # Add runners here
+    # EG: suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestFirestoreDataAPI))
     return suite
 
 
@@ -37,4 +48,6 @@ if __name__ == '__main__':
     primary_suite = unittest.TestSuite()
     primary_suite.addTests(routes_suite())
     runner = unittest.TextTestRunner(verbosity=2)
+
     runner.run(primary_suite)
+    # runner.run(local_suite()) # use me and supress above when running custom local test suites
