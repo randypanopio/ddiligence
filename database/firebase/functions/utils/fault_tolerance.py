@@ -5,12 +5,16 @@ import time
 from collections.abc import Callable
 from firebase_functions import logger
 
+
 def retry_wrapper(func: Callable,
-                  max_retries:int = 3, base_delay:int = 1, max_delay: int = 60) -> None:
+                  max_retries: int = 3, 
+                  base_delay: int = 1, 
+                  max_delay: int = 60) -> None:
     """
     Wrapper function to add retry logic around a given function. uses exponential backoff
     """
     delay = base_delay
+    print("executing passed method proto")
     for i in range(max_retries):
         try:
             return func()
