@@ -1,0 +1,22 @@
+name: Debugging purpose archive me when done
+
+on:
+  push:
+    branches:
+      - staging
+      - main
+  pull_request:
+    branches:
+        - staging
+        - main
+
+
+jobs:
+  check-skip-tag:
+    runs-on: ubuntu-latest    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: display secrets
+        run: echo "this should be hidden no? repo scret ${{secrets.DEBUG_SECRET}}, this is an env secret ${{secrets.DEBUG_ENV_SECRET}}"
