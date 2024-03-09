@@ -78,10 +78,7 @@ jobs:
     env:
       GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
     steps:
-      - name: Use Google Application Credentials
-        run: echo $GOOGLE_APPLICATION_CREDENTIALS
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}      
+
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -90,6 +87,10 @@ jobs:
         with:
           python-version: 3.x
 
+      - name: Use Google Application Credentials
+        run: echo $GOOGLE_APPLICATION_CREDENTIALS
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}                
       - name: echo trigger
         run: |
           echo "run_firebase_functions: ${{ needs.check-tags-and-run.outputs.run_firebase_functions}}, run_all_suites: ${{needs.check-tags-and-run.outputs.run_all_suites}}"
