@@ -14,3 +14,10 @@ After cloning the entire project and setting up python in your machine:
         - It should create an environment you can begin testing at `http://127.0.0.1:5000/`
 4. Create unit tests under the `app_flask/tests/ directory`  ensure you also run the existing unit tests before submitting:
     - ```python -m unittest discover -s tests```
+
+
+NOTE:
+known required packages:
+firebase_admin
+flask
+cors
