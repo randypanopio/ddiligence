@@ -78,10 +78,7 @@ jobs:
     defaults:
       run:
         working-directory: database/firebase/functions
-    env:
-      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v3
 
