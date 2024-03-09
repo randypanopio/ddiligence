@@ -2,6 +2,7 @@
     Author: Randy Panopio @rpanopio
 '''
 import os
+from typing import List
 from datetime import datetime, timedelta
 import yfinance as yf
 from firebase_admin import firestore, credentials, initialize_app
