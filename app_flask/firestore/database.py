@@ -22,15 +22,17 @@ class DatabaseManager:
         '''
             Initializes database connection
         '''
+
         # check if local file (eg local dev) and set as env var
         # set it as an env var and init app with this credentials
         # otherwise it will get env EG. on GitHub Actions - use secret env vars
         sv_path = "super_secrets/serviceAccKey.json"
         if os.path.exists(sv_path):
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = sv_path
+            initialize_app(credentials.Certificate(sv_path))
         else:
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") # type: ignore
-        initialize_app()
+            env = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+            initialize_app(credentials.Certificate(env))
         self.db = firestore.client()
 
     def __new__(cls):
