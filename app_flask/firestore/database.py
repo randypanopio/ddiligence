@@ -27,11 +27,12 @@ class DatabaseManager:
         # otherwise it will get env EG. on GitHub Actions - use secret env vars
         sv_path = "super_secrets/serviceAccKey.json"
         if os.path.exists(sv_path):
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = sv_path
-            initialize_app(credentials.Certificate(sv_path))
+            # Initialize Firebase Admin with the service account key file
+            cred = credentials.Certificate(sv_path)
+            initialize_app(cred)
         else:
-            env = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-            initialize_app(credentials.Certificate(env))
+            # Use the environment variable directly if the file does not exist
+            initialize_app()
         self.db = firestore.client()
 
     def __new__(cls):
