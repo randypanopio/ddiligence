@@ -33,8 +33,8 @@ jobs:
             echo "raw dogged DEBUG_ENV_SECRET"
             echo $DEBUG_ENV_SECRET
 
-      - name: Use DEBUG_SECRET NOT SET an env var   
-        run: |
-            echo "raw dogged DEBUG_SECRET"
-            echo $DEBUG_ENV_SECRET
+      - name: Use DEBUG_SECRET an env var raw dogged  
+        run: echo $DEBUG_SECRET
+        env:
+            DEBUG_SECRET: ${{ secrets.DEBUG_SECRET }}
             
