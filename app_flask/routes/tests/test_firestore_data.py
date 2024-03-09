@@ -1,7 +1,6 @@
 # pylint: disable=C0111
 import unittest
-from datetime import datetime
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from flask import Flask
 from routes.firestore_data import firestore_data_bp
 
@@ -23,24 +22,26 @@ class TestFirestoreDataAPI(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         data = response.json
-        self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]['date'], '2023-01-01')
-        self.assertEqual(data[0]['close_price'], 100.0)
+        self.assertEqual(len(data), 1)  # type: ignore
+        self.assertEqual(data[0]['date'], '2023-01-01')  # type: ignore
+        self.assertEqual(data[0]['close_price'], 100.0)  # type: ignore
 
     @patch('routes.firestore_data.db_manager')
     def test_get_daily_banner_messages(self, mock_db_manager):
         mock_db_manager.get_daily_messages.return_value = [
-            {'author': 'Author1', 'message': 'Message1', 'tags': ['tag1', 'tag2']},
-            {'author': 'Author2', 'message': 'Message2', 'tags': ['tag3', 'tag4']}
+            {'author': 'Author1', 'message': 'Message1',
+                'tags': ['tag1', 'tag2']},
+            {'author': 'Author2', 'message': 'Message2',
+                'tags': ['tag3', 'tag4']}
         ]
         # TODO figure out mock remote_addr
         response = self.client.get('/api/v1/banner_messages')
         self.assertEqual(response.status_code, 200)
         data = response.json
-        self.assertEqual(len(data), 2)
-        self.assertIn('author', data[0])
-        self.assertIn('message', data[0])
-        self.assertIn('tags', data[0])
+        self.assertEqual(len(data), 2)  # type: ignore
+        self.assertIn('author', data[0])  # type: ignore
+        self.assertIn('message', data[0])  # type: ignore
+        self.assertIn('tags', data[0])  # type: ignore
 
 
 if __name__ == '__main__':
