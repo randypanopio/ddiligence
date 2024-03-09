@@ -61,6 +61,9 @@ jobs:
     needs: check-tags-and-run
     if: ${{ needs.check-tags-and-run.outputs.run_client_react == 'true' || needs.check-tags-and-run.outputs.run_all_suites == 'true' }}
     steps:
+      - name: read var
+        run: echo "GOOGLE_APPLICATION_CREDENTIALS secret ${{secrets.GOOGLE_APPLICATION_CREDENTIALS}}"     
+
       - name: run suite
         run: echo "run_client_react-suite"     
 
