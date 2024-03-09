@@ -27,6 +27,7 @@ jobs:
             echo "env secret: ${{secrets.DEBUG_ENV_SECRET}}"
             echo "raw dog repo secret $DEBUG_SECRET"
             echo "raw dog env secret $DEBUG_ENV_SECRET"
+            echo "for real hide me ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}  "
 
       - name: Use DEBUG_ENV_SECRET as an env var 
         env:
@@ -38,7 +39,7 @@ jobs:
       - name: Use DEBUG_SECRET an env var raw dogged  
         run: |
             echo $DEBUG_SECRET
-            echo "truly secret"
+            echo "google env level set secret secret"
             echo $GOOGLE_APPLICATION_CREDENTIALS
 
             
