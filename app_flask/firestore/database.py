@@ -2,6 +2,7 @@
     Database Connection class and instance
 '''
 import os
+import json
 from typing import List, Tuple, Any
 from datetime import datetime
 from firebase_admin import firestore, credentials, initialize_app
@@ -31,9 +32,8 @@ class DatabaseManager:
             initialize_app(credentials.Certificate(sv_path))
         else:
             env = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-            initialize_app(options={
-                'credentials': credentials.Certificate(env)
-            })
+            initialize_app(credentials.Certificate(json.loads(env))) # type: ignore
+
         self.db = firestore.client()
 
     def __new__(cls):
