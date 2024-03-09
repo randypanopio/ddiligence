@@ -12,11 +12,29 @@ on:
 
 
 jobs:
-  check-skip-tag:
+  debug-workflow:
     runs-on: ubuntu-latest    
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: display secrets
-        run: echo "this should be hidden no? repo scret ${{secrets.DEBUG_SECRET}}, this is an env secret ${{secrets.DEBUG_ENV_SECRET}}"
+        run: |
+            echo "this should be hidden no? repo scret "
+            echo "repo level secret: ${{secrets.DEBUG_SECRET}}"
+            echo "env secret: ${{secrets.DEBUG_ENV_SECRET}}"
+            echo "raw dog repo secret $DEBUG_SECRET"
+            echo "raw dog env secret $DEBUG_ENV_SECRET"
+
+      - name: Use DEBUG_ENV_SECRET as an env var 
+        env:
+            DEBUG_ENV_SECRET: ${{ secrets.DEBUG_ENV_SECRET }}        
+        run: |
+            echo "raw dogged DEBUG_ENV_SECRET"
+            echo $DEBUG_ENV_SECRET
+
+      - name: Use DEBUG_SECRET NOT SET an env var   
+        run: |
+            echo "raw dogged DEBUG_SECRET"
+            echo $DEBUG_ENV_SECRET
+            

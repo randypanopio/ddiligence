@@ -90,8 +90,6 @@ jobs:
         with:
           python-version: 3.x
 
-      - name: Use Google Application Credentials
-        run: echo $GOOGLE_APPLICATION_CREDENTIALS
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}                
       - name: echo trigger
