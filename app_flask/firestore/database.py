@@ -22,7 +22,6 @@ class DatabaseManager:
         '''
             Initializes database connection
         '''
-
         # check if local file (eg local dev) and set as env var
         # set it as an env var and init app with this credentials
         # otherwise it will get env EG. on GitHub Actions - use secret env vars
