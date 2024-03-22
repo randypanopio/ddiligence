@@ -15,4 +15,4 @@ flask_app.register_blueprint(firestore_data_bp)
 flask_app.register_blueprint(health_bp)
 
 if __name__ == '__main__':
-    flask_app.run()
+    flask_app.run(port=5000, host='0.0.0.0')
