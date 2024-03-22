@@ -22,3 +22,8 @@ CMD ["python", "app.py"]
 # cd to diligence/app_flask
 # run:
 # docker build -t ddiligence/flask-service:0.0.1.RELEASE . -f ../.docker/flask-app/Dockerfile
+
+# TODO use ENV vars, this image gets built with a copy of secrets.. NOT GOOD!
+
+# SSHing to EC2 instance:
+# ssh -i <your_pem_key_file> ec2-user@<public_dns_name_or_ip>
