@@ -35,19 +35,20 @@ def foo():
 
 if __name__ == '__main__':
     print("running admin_script")
-    from utils.fault_tolerance import retry_wrapper
-    day_delta: int = 3
-    today = datetime.now()
-    start = (today - timedelta(days=day_delta)).strftime(DATE_FORMAT)
-    end = today.strftime(DATE_FORMAT)
-    tickers = [doc.id for doc in db.collection(TICKER_COLLECTION).stream()]
-    def igloo (arg1, arg2, arg3):
-        print(f'foo {arg1}, {arg2}, {arg3}')
-        if random.random() < 0.5:  # Randomly fails 50% of the time
-            raise Exception("Randomly failed")
+    update_current_tickers(20)
+    # from utils.fault_tolerance import retry_wrapper
+    # day_delta: int = 3
+    # today = datetime.now()
+    # start = (today - timedelta(days=day_delta)).strftime(DATE_FORMAT)
+    # end = today.strftime(DATE_FORMAT)
+    # tickers = [doc.id for doc in db.collection(TICKER_COLLECTION).stream()]
+    # def igloo (arg1, arg2, arg3):
+    #     print(f'foo {arg1}, {arg2}, {arg3}')
+    #     if random.random() < 0.5:  # Randomly fails 50% of the time
+    #         raise Exception("Randomly failed")
 
-    for ticker in tickers:
-        retry_wrapper(lambda: igloo(ticker, start, end), 5)
-    print(f"full execution end: {datetime.now()}")
+    # for ticker in tickers:
+    #     retry_wrapper(lambda: igloo(ticker, start, end), 5)
+    # print(f"full execution end: {datetime.now()}")
 
 

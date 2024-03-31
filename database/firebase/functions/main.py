@@ -20,10 +20,10 @@ initialize_app(credentials.Certificate(SV_PATH))
 db = firestore.client()
 
 # Maybe TODO expose https_fn endpoint
-@scheduler_fn.on_schedule(
-    schedule="every day 00:00",
-    timezone=scheduler_fn.Timezone("America/Los_Angeles"),
-)  # type: ignore
+# @scheduler_fn.on_schedule(
+#     schedule="every day 00:00",
+#     timezone=scheduler_fn.Timezone("America/Los_Angeles"),
+# )  # type: ignore
 def update_current_tickers(day_delta: int = 3) -> None:
     """
         updates firebase current tickers with new entries 
